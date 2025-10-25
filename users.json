@@ -1,0 +1,17 @@
+[
+    {
+        "id": 1,
+        "student_id": "240821",
+        "role": "student"
+    },
+     {
+        "id": 2,
+        "student_id": "admin001",
+        "role": "Admin"
+    },
+    {
+        "id": 3,
+        "student_id": "241747",
+        "role": "Admin"
+    }
+]

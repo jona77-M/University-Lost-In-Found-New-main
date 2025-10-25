@@ -1,0 +1,66 @@
+[
+    {
+        "id": 1,
+        "name": "Jona",
+        "description": "Basta bata ini hahha",
+        "category": "People",
+        "date_found": "2025-10-21T14:53:07.735748",
+        "status": "Claimed",
+        "assisting_staff": "Jona",
+        "image": "WIN_20250924_14_07_38_Pro.jpg",
+        "claimer_name": "kyle alcazar",
+        "college": "cs",
+        "course": "bsit",
+        "year_section": "2nd E",
+        "claimed_at": "October 24, 2025 09:58 AM",
+        "proof_image": "20251024095847_WIN_20250924_14_07_38_Pro.jpg",
+        "proof_uploaded_at": "2025-10-24T09:58:47.689760"
+    },
+    {
+        "id": 2,
+        "name": "Rusi ",
+        "description": "Naagihan ko sa acad mga 1pm knina sa room 110 CS",
+        "category": "key",
+        "date_found": "2025-10-21T14:55:38.943146",
+        "status": "Unclaimed",
+        "assisting_staff": "",
+        "image": "susi.jpg"
+    },
+    {
+        "id": 3,
+        "name": "Payong",
+        "description": "Color green na payong naagihan ko sa acad room 115 paki contact nla ak sa Fb (Juan Dela Cruz)",
+        "category": "Umbrella",
+        "date_found": "2025-10-21T14:58:38.177281",
+        "status": "Unclaimed",
+        "assisting_staff": "",
+        "image": "payong.jpg"
+    },
+    {
+        "id": 4,
+        "name": "Jacket",
+        "description": "Red Jacket found in the acad room 119",
+        "category": "Clothes",
+        "date_found": "2025-10-21T15:19:19.203072",
+        "status": "Claimed",
+        "assisting_staff": "Glen Ford Anquilo",
+        "image": "jacket.jpg",
+        "claimer_name": "Jane Cabales",
+        "college": "COE",
+        "course": "BSEE",
+        "year_section": "2nd year",
+        "claimed_at": "October 21, 2025 05:31 PM",
+        "proof_image": "20251021173147_29bb6ac7-e6ef-4b5d-8950-869c1716c33d.jpg",
+        "proof_uploaded_at": "2025-10-21T17:31:47.503713"
+    },
+    {
+        "id": 5,
+        "name": "Document",
+        "description": "missing",
+        "category": "Document",
+        "date_found": "2025-10-24T09:57:54.935048",
+        "status": "Unclaimed",
+        "assisting_staff": "",
+        "image": "document.jpg"
+    }
+]
