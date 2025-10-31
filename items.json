@@ -1,32 +1,5 @@
 [
     {
-        "id": 1,
-        "name": "Jona",
-        "description": "Basta bata ini hahha",
-        "category": "People",
-        "date_found": "2025-10-21T14:53:07.735748",
-        "status": "Claimed",
-        "assisting_staff": "Jona",
-        "image": "WIN_20250924_14_07_38_Pro.jpg",
-        "claimer_name": "kyle alcazar",
-        "college": "cs",
-        "course": "bsit",
-        "year_section": "2nd E",
-        "claimed_at": "October 24, 2025 09:58 AM",
-        "proof_image": "20251024095847_WIN_20250924_14_07_38_Pro.jpg",
-        "proof_uploaded_at": "2025-10-24T09:58:47.689760"
-    },
-    {
-        "id": 2,
-        "name": "Rusi ",
-        "description": "Naagihan ko sa acad mga 1pm knina sa room 110 CS",
-        "category": "key",
-        "date_found": "2025-10-21T14:55:38.943146",
-        "status": "Unclaimed",
-        "assisting_staff": "",
-        "image": "susi.jpg"
-    },
-    {
         "id": 3,
         "name": "Payong",
         "description": "Color green na payong naagihan ko sa acad room 115 paki contact nla ak sa Fb (Juan Dela Cruz)",

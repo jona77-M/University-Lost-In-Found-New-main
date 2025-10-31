@@ -87,11 +87,22 @@ def add_staff():
         return redirect(url_for("login"))
     if request.method == "POST":
         staff_list = load_staff()
+
+
+        # --- new for photo upload ---
+        file = request.files.get("image")  # get uploaded image from form
+        filename = ""  # default if no image
+        if file and allowed_file(file.filename):  # check if file is valid
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))  # save file in static/uploads
+        # --- end new for photo upload ---
+
         new_staff = {
             "id": len(staff_list) + 1,
             "name": request.form["name"],
             "role": request.form["role"],
-            "date_added": datetime.datetime.now().isoformat()
+            "date_added": datetime.datetime.now().isoformat(),
+            "image": filename  # ✅ new line for json
         }
         staff_list.append(new_staff)
         save_staff(staff_list)
@@ -101,6 +112,10 @@ def add_staff():
 
 # Ensure upload folder exists
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+#bag o para sa pag upload pic
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg', 'gif'}
+
 
 
 # ----------------------
@@ -299,6 +314,7 @@ def logout():
     return redirect(url_for("login"))
 
 
+
 # ----------------------
 # ADMIN PANELLLLLL
 # ----------------------
@@ -311,9 +327,25 @@ def admin_panel():
     show_recent = request.args.get("show_recent") == "true"
     show_staff = request.args.get("show_staff") == "true"
 
+
+    selected_category = request.args.get("category", "")   # bag o ine
+    query = request.args.get("q", "").lower()              # bag o ine
+
+
     items = load_items()
     staff_list = load_staff()
     users = load_json(USERS_FILE)
+
+    #  Filter staff by search (for Staff tab)
+    if show_staff and query:
+        staff_list = [s for s in staff_list if query in s["name"].lower()] #new 2.0
+    # Filter by category
+    if selected_category:                                 # bag o ine
+        items = [i for i in items if (i.get("category") or "").lower() == selected_category.lower()]   # bag o ine
+     # Filter by search
+    if query:                                             # bag o ine
+        items = [i for i in items if query in i["name"].lower() or query in (i.get("category") or "").lower()]   # bag o ine
+
 
     stats = {
         "total_items": len(items),
@@ -328,6 +360,8 @@ def admin_panel():
         category = item.get("category", "Uncategorized")
         stats["items_by_category"][category] = stats["items_by_category"].get(category, 0) + 1
 
+    categories = sorted(list({item["category"] for item in load_items() if item.get("category")}))   # bag o ine
+
     return render_template(
         "admin_panel.html",
         stats=stats,
@@ -335,7 +369,10 @@ def admin_panel():
         staff=staff_list,
         users=users,
         show_recent=show_recent,
-        show_staff=show_staff
+        show_staff=show_staff,
+        categories=categories,                # bag o ine
+        selected_category=selected_category,  # bag o ine
+        query=query                           # bag o ine
     )
 
 
@@ -347,5 +384,69 @@ def view_items():
     return render_template("items.html", items=items)
 
 
+
+# ===========================
+# newln for edit staff
+# ===========================
+@app.route("/staff/update/<int:staff_id>", methods=["GET", "POST"])
+def update_staff(staff_id):
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    staff_list = load_staff()
+    staff_member = next((s for s in staff_list if s["id"] == staff_id), None)
+
+    if not staff_member:
+        return "Staff not found", 404
+
+    if request.method == "POST":
+        # Update staff information
+        staff_member["name"] = request.form["name"]
+        staff_member["role"] = request.form["role"]
+
+        # Optional: handle image upload
+        file = request.files.get("image")
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
+            staff_member["image"] = filename
+
+        save_staff(staff_list)
+        flash("Staff updated successfully!", "success")
+        return redirect(url_for("admin_panel", show_staff="true"))
+
+    # Render the update page
+    return render_template("update_staff.html", staff=staff_member)
+# ===========================
+# end newln for edit staff
+# ===========================
+
+
+# ===========================
+# new for remove staff
+# ===========================
+@app.route("/delete_staff/<int:staff_id>")
+def delete_staff(staff_id):
+    try:
+        with open("staff.json", "r") as f:
+            staff_list = json.load(f)
+    except FileNotFoundError:
+        staff_list = []
+
+    # Remove the staff with the given ID
+    staff_list = [s for s in staff_list if s["id"] != staff_id]
+
+    # Save updated list back to JSON
+    with open("staff.json", "w") as f:
+        json.dump(staff_list, f, indent=4)
+
+    flash("Staff removed successfully!", "info")
+    return redirect(url_for("admin_panel", show_staff="true"))
+# ===========================
+# end new for remove staff
+# ===========================
+
 if __name__ == "__main__":
     app.run(debug=True)
+
+

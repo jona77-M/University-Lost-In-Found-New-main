@@ -11,9 +11,12 @@
     <aside class="admin-sidebar">
         <div class="logo">Lost & Found Admin</div>
         <ul>
-            <li class="{% if not show_recent and not show_staff %}active{% endif %}"><a href="{{ url_for('admin_panel') }}">🏠 Dashboard</a></li>
-            <li class="{% if show_recent %}active{% endif %}"><a href="{{ url_for('admin_panel') }}?show_recent=true&show_staff=false">📦 Items</a></li>
-            <li class="{% if show_staff %}active{% endif %}"><a href="{{ url_for('admin_panel') }}?show_staff=true&show_recent=false">👥 Staff</a></li>
+            <li class="{% if not show_recent and not show_staff %}active{% endif %}"><a
+                    href="{{ url_for('admin_panel') }}">🏠 Dashboard</a></li>
+            <li class="{% if show_recent %}active{% endif %}"><a
+                    href="{{ url_for('admin_panel') }}?show_recent=true&show_staff=false">📦 Items</a></li>
+            <li class="{% if show_staff %}active{% endif %}"><a
+                    href="{{ url_for('admin_panel') }}?show_staff=true&show_recent=false">👥 Staff</a></li>
             <li><a href="{{ url_for('logout') }}">🚪 Logout</a></li>
 
 
@@ -53,15 +56,28 @@
         {% if show_recent %}
         <section class="admin-section">
             <h2>Recent Items</h2>
+
             <div class="admin-filters">
-                <input type="text" class="admin-search" placeholder="Search items...">
-                <select class="admin-select">
-                    <option value="">All Categories</option>
-                    {% for category, _ in stats.items_by_category.items() %}
-                    <option value="{{ category }}">{{ category }}</option>
-                    {% endfor %}
-                </select>
+                <form method="GET" action="{{ url_for('admin_panel') }}">
+                    <input type="hidden" name="show_recent" value="true">
+                    <input type="hidden" name="show_staff" value="false">
+
+                    <!-- bag o ine -->
+                    <input type="text" name="q" placeholder="🔍 Search items..." value="{{ query }}"> <!-- bag o ine -->
+
+                    <!-- bag o ine -->
+                    <select class="admin-select" name="category" onchange="this.form.submit()"> <!-- bag o ine -->
+
+                        <option value="">All Categories</option>
+                        {% for category, _ in stats.items_by_category.items() %}
+                        <option value="{{ category }}" {% if selected_category==category %}selected{% endif %}>
+                            {{ category }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </form>
             </div>
+
 
             <table class="admin-table">
                 <tr>
@@ -76,22 +92,24 @@
                 <tr>
                     <td>
                         {% if item.image %}
-                        <img src="{{ url_for('static', filename='uploads/' ~ item.image) }}" alt="Item Image" width="80" height="80"
-            
-                    />
-                    {% else %} No Image {% endif %}
+                        <img src="{{ url_for('static', filename='uploads/' ~ item.image) }}" alt="Item Image" width="80"
+                            height="80" />
+                        {% else %} No Image {% endif %}
                     </td>
                     <td>{{ item.name }}</td>
                     <td>{{ item.category }}</td>
                     <td>
-                        <span class="status-badge {% if item.status == 'Claimed' %}status-active{% else %}status-inactive{% endif %}">
+                        <span
+                            class="status-badge {% if item.status == 'Claimed' %}status-active{% else %}status-inactive{% endif %}">
                             {{ item.status }}
                         </span>
                     </td>
                     <td>{{ item.date_found | format_datetime }}</td>
                     <td class="text-right">
-                        <a href="{{ url_for('update_item', item_id=item.id) }}" class="admin-btn admin-btn-secondary">Edit</a>
-                        <a href="{{ url_for('delete_item', item_id=item.id) }}" class="admin-btn admin-btn-danger">Delete</a>
+                        <a href="{{ url_for('update_item', item_id=item.id) }}"
+                            class="admin-btn admin-btn-secondary">Edit</a>
+                        <a href="{{ url_for('delete_item', item_id=item.id) }}"
+                            class="admin-btn admin-btn-danger">Delete</a>
                     </td>
                 </tr>
                 {% endfor %}
@@ -104,15 +122,24 @@
         <!-- Staff Management -->
         <section class="admin-section" id="items">
             <h2>Staff Management</h2>
-            <div class="admin-filters">
-                <input type="text" class="admin-search" placeholder="Search staff...">
+            <div class="admin-filters" style="display: flex; align-items: center; gap: 10px;">
+                <!-- new  -->
+                <form method="GET" action="{{ url_for('admin_panel') }}" class="admin-search-form"
+                    style="display: flex; align-items: center; gap: 8px;">
+                    <input type="hidden" name="show_staff" value="true">
+                    <input type="text" name="q" class="admin-search" placeholder="Search staff..." value="{{ query }}">
+                    <button type="submit" class="admin-btn admin-btn-secondary">Search</button>
+                </form>
+
+                <!-- Add Staff Button orig -->
                 <a href="{{ url_for('add_staff') }}" class="admin-btn admin-btn-primary">
                     <i class="fas fa-plus"></i> Add New Staff
                 </a>
-            </div>
 
+            </div>
             <table class="admin-table">
                 <tr>
+                    <th>Image</th>
                     <th>ID</th>
                     <th>Name</th>
                     <th>Role</th>
@@ -121,13 +148,23 @@
                 </tr>
                 {% for s in staff %}
                 <tr>
+                    <td>
+                        {% if s.image %}
+                        <img src="{{ url_for('static', filename='uploads/' ~ s.image) }}" alt="Staff Photo" width="80">
+                        {% else %}
+                        <img src="{{ url_for('static', filename='uploads/default.png') }}" alt="No Photo" width="80">
+                        {% endif %}
+                    </td>
                     <td>{{ s.id }}</td>
                     <td>{{ s.name }}</td>
                     <td><span class="status-badge status-active">{{ s.role }}</span></td>
                     <td>{{ s.date_added | format_datetime }}</td>
                     <td class="text-right">
-                        <a href="#" class="admin-btn admin-btn-secondary">Edit</a>
-                        <a href="#" class="admin-btn admin-btn-danger">Remove</a>
+                        <a href="{{ url_for('update_staff', staff_id=s.id) }}"
+                            class="admin-btn admin-btn-secondary">Edit</a>
+
+                        <a href="{{ url_for('delete_staff', staff_id=s.id) }}" class="admin-btn admin-btn-danger"
+                            onclick="return confirm('Are you sure you want to remove this staff member?');">Remove</a> <!-- newln for delete staff -->
                     </td>
                 </tr>
                 {% endfor %}
