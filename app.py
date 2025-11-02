@@ -14,9 +14,7 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
 
 
-# ----------------------
 # ROLE CHECK HELPERS
-# ----------------------
 def is_admin():
     """Check if current user has admin role."""
     return session.get('user_role') == 'Admin'
@@ -32,9 +30,7 @@ def admin_required(f):
     return decorated_function
 
 
-# ----------------------
 # TEMPLATE FILTER
-# ----------------------
 @app.template_filter("format_datetime")
 def format_datetime(value):
     try:
@@ -44,9 +40,7 @@ def format_datetime(value):
         return value
 
 
-# ----------------------
 # JSON HELPERS
-# ----------------------
 def load_json(file):
     if os.path.exists(file):
         with open(file, "r") as f:
@@ -58,9 +52,7 @@ def save_json(file, data):
         json.dump(data, f, indent=4)
 
 
-# ----------------------
 # STAFF HANDLERS
-# ----------------------
 def load_staff():
     return load_json(STAFF_FILE)
 
@@ -89,20 +81,20 @@ def add_staff():
         staff_list = load_staff()
 
 
-        # --- new for photo upload ---
-        file = request.files.get("image")  # get uploaded image from form
-        filename = ""  # default if no image
-        if file and allowed_file(file.filename):  # check if file is valid
+        # j
+        file = request.files.get("image")  
+        filename = "" 
+        if file and allowed_file(file.filename): 
             filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))  # save file in static/uploads
-        # --- end new for photo upload ---
+            file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename)) 
+        # j
 
         new_staff = {
             "id": len(staff_list) + 1,
             "name": request.form["name"],
             "role": request.form["role"],
             "date_added": datetime.datetime.now().isoformat(),
-            "image": filename  # ✅ new line for json
+            "image": filename  # j
         }
         staff_list.append(new_staff)
         save_staff(staff_list)
@@ -112,15 +104,13 @@ def add_staff():
 
 # Ensure upload folder exists
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-#bag o para sa pag upload pic
+# j
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg', 'gif'}
 
 
 
-# ----------------------
 # ITEM HANDLERS
-# ----------------------
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
@@ -137,9 +127,7 @@ def get_categories():
     return sorted([c for c in cats if c])
 
 
-# ----------------------
 # ROUTES
-# ----------------------
 @app.route("/")
 def home():
     if "user_id" not in session:
@@ -282,9 +270,7 @@ def delete_item(item_id):
     return redirect(url_for("home"))
 
 
-# ----------------------
 # LOGIN & LOGOUT
-# ----------------------
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -315,9 +301,7 @@ def logout():
 
 
 
-# ----------------------
 # ADMIN PANELLLLLL
-# ----------------------
 @app.route("/admin")
 @admin_required
 def admin_panel():
@@ -328,24 +312,25 @@ def admin_panel():
     show_staff = request.args.get("show_staff") == "true"
 
 
-    selected_category = request.args.get("category", "")   # bag o ine
-    query = request.args.get("q", "").lower()              # bag o ine
+    selected_category = request.args.get("category", "")   # j
+    query = request.args.get("q", "").lower()              # j
 
 
     items = load_items()
     staff_list = load_staff()
     users = load_json(USERS_FILE)
 
+    # j
     #  Filter staff by search (for Staff tab)
     if show_staff and query:
-        staff_list = [s for s in staff_list if query in s["name"].lower()] #new 2.0
+        staff_list = [s for s in staff_list if query in s["name"].lower()] 
     # Filter by category
-    if selected_category:                                 # bag o ine
-        items = [i for i in items if (i.get("category") or "").lower() == selected_category.lower()]   # bag o ine
+    if selected_category:                              
+        items = [i for i in items if (i.get("category") or "").lower() == selected_category.lower()]  
      # Filter by search
-    if query:                                             # bag o ine
-        items = [i for i in items if query in i["name"].lower() or query in (i.get("category") or "").lower()]   # bag o ine
-
+    if query:                                          
+        items = [i for i in items if query in i["name"].lower() or query in (i.get("category") or "").lower()] 
+    # j
 
     stats = {
         "total_items": len(items),
@@ -360,7 +345,7 @@ def admin_panel():
         category = item.get("category", "Uncategorized")
         stats["items_by_category"][category] = stats["items_by_category"].get(category, 0) + 1
 
-    categories = sorted(list({item["category"] for item in load_items() if item.get("category")}))   # bag o ine
+    categories = sorted(list({item["category"] for item in load_items() if item.get("category")}))   # j
 
     return render_template(
         "admin_panel.html",
@@ -370,9 +355,9 @@ def admin_panel():
         users=users,
         show_recent=show_recent,
         show_staff=show_staff,
-        categories=categories,                # bag o ine
-        selected_category=selected_category,  # bag o ine
-        query=query                           # bag o ine
+        categories=categories,                # j
+        selected_category=selected_category,  # j
+        query=query                           # j
     )
 
 
@@ -384,10 +369,8 @@ def view_items():
     return render_template("items.html", items=items)
 
 
-
-# ===========================
-# newln for edit staff
-# ===========================
+# j
+# Edit staff
 @app.route("/staff/update/<int:staff_id>", methods=["GET", "POST"])
 def update_staff(staff_id):
     if "user_id" not in session:
@@ -417,14 +400,9 @@ def update_staff(staff_id):
 
     # Render the update page
     return render_template("update_staff.html", staff=staff_member)
-# ===========================
-# end newln for edit staff
-# ===========================
 
 
-# ===========================
-# new for remove staff
-# ===========================
+# Remove staff
 @app.route("/delete_staff/<int:staff_id>")
 def delete_staff(staff_id):
     try:
@@ -442,9 +420,7 @@ def delete_staff(staff_id):
 
     flash("Staff removed successfully!", "info")
     return redirect(url_for("admin_panel", show_staff="true"))
-# ===========================
-# end new for remove staff
-# ===========================
+# /j
 
 if __name__ == "__main__":
     app.run(debug=True)

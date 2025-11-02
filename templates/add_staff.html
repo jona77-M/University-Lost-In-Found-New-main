@@ -7,10 +7,10 @@
 </head>
 <body>
     <h1>Add New Staff</h1>
-    <form method="POST" enctype="multipart/form-data" >    <!-- add enc for photo to reach python backend -->
+    <form method="POST" enctype="multipart/form-data" >    <!-- j -->
         <input type="text" name="name" placeholder="Staff Name" required><br>
         <input type="text" name="role" placeholder="Role (e.g., Clerk, Admin)" required><br>
-        <input type="file" name="image"><br> <!-- new to upload photo -->
+        <input type="file" name="image"><br> <!--j -->
         <button type="submit">Add Staff</button>
     </form>
     <a href="{{ url_for('staff') }}">⬅ Back to Staff</a>
